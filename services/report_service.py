@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment, Font
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -730,7 +731,7 @@ def export_report_to_excel(
     summary: Optional[dict] = None,
 ) -> tuple[bool, str]:
     """
-    Raporu Excel dosyası olarak kaydeder.
+    Hazırlanan raporu biçimlendirilmiş Excel dosyası olarak kaydeder.
     """
 
     if not rows:
@@ -750,6 +751,7 @@ def export_report_to_excel(
         worksheet = workbook.active
         worksheet.title = "Rapor"
 
+        # Rapor başlığı
         worksheet.merge_cells(
             start_row=1,
             start_column=1,
@@ -768,8 +770,12 @@ def export_report_to_excel(
         )
         title_cell.alignment = Alignment(
             horizontal="center",
+            vertical="center",
         )
 
+        worksheet.row_dimensions[1].height = 25
+
+        # Tablo başlıkları
         header_row = 3
 
         for column_index, header in enumerate(
@@ -782,14 +788,13 @@ def export_report_to_excel(
                 value=header,
             )
 
-            cell.font = Font(
-                bold=True,
-            )
-
+            cell.font = Font(bold=True)
             cell.alignment = Alignment(
                 horizontal="center",
+                vertical="center",
             )
 
+        # Rapor satırları
         for row_index, row_data in enumerate(
             rows,
             start=header_row + 1,
@@ -798,57 +803,135 @@ def export_report_to_excel(
                 row_data,
                 start=1,
             ):
-                worksheet.cell(
+                cell = worksheet.cell(
                     row=row_index,
                     column=column_index,
                     value=value,
                 )
 
-        for column_cells in worksheet.columns:
+                cell.alignment = Alignment(
+                    vertical="center",
+                    wrap_text=True,
+                )
+
+        # Sütun genişliklerini güvenli şekilde ayarla.
+        # Birleştirilmiş hücrelerden column_letter almıyoruz.
+        for column_index in range(
+            1,
+            len(headers) + 1,
+        ):
+            column_letter = get_column_letter(
+                column_index
+            )
             max_length = 0
-            column_letter = column_cells[0].column_letter
 
-            for cell in column_cells:
-                value = str(cell.value or "")
-                max_length = max(max_length, len(value))
+            for row_index in range(
+                1,
+                worksheet.max_row + 1,
+            ):
+                cell = worksheet.cell(
+                    row=row_index,
+                    column=column_index,
+                )
 
-            worksheet.column_dimensions[column_letter].width = min(
-                max_length + 3,
+                cell_value = str(
+                    cell.value or ""
+                )
+
+                max_length = max(
+                    max_length,
+                    len(cell_value),
+                )
+
+            worksheet.column_dimensions[
+                column_letter
+            ].width = min(
+                max(max_length + 3, 12),
                 45,
             )
 
+        # Özet bilgileri
         if summary:
-            summary_start = header_row + len(rows) + 3
+            summary_start_row = (
+                header_row
+                + len(rows)
+                + 3
+            )
 
-            summary_values = [
-                ("Toplam Borç", summary.get("total_debt")),
-                ("Toplam Ödeme", summary.get("total_payment")),
-                ("Toplam İndirim", summary.get("total_discount")),
-                ("Toplam İade", summary.get("total_return")),
-                ("Kalan Borç", summary.get("remaining")),
-            ]
+            customer_name = summary.get(
+                "customer_name"
+            )
 
-            summary_values = [
-                (label, value)
-                for label, value in summary_values
-                if value is not None
-            ]
-
-            for index, (label, value) in enumerate(
-                summary_values,
-                start=summary_start,
-            ):
+            if customer_name:
                 worksheet.cell(
-                    row=index,
+                    row=summary_start_row,
+                    column=1,
+                    value="Müşteri",
+                ).font = Font(bold=True)
+
+                worksheet.cell(
+                    row=summary_start_row,
+                    column=2,
+                    value=customer_name,
+                )
+
+                summary_start_row += 1
+
+            summary_values = [
+                (
+                    "Toplam Borç",
+                    summary.get("total_debt"),
+                ),
+                (
+                    "Toplam Ödeme",
+                    summary.get("total_payment"),
+                ),
+                (
+                    "Toplam İndirim",
+                    summary.get("total_discount"),
+                ),
+                (
+                    "Toplam İade",
+                    summary.get("total_return"),
+                ),
+                (
+                    "Toplam Tahsilat",
+                    summary.get("total_payment"),
+                ),
+                (
+                    "Kalan Borç",
+                    summary.get("remaining"),
+                ),
+            ]
+
+            added_labels = set()
+
+            for label, value in summary_values:
+                if value is None:
+                    continue
+
+                if label in added_labels:
+                    continue
+
+                added_labels.add(label)
+
+                worksheet.cell(
+                    row=summary_start_row,
                     column=1,
                     value=label,
                 ).font = Font(bold=True)
 
                 worksheet.cell(
-                    row=index,
+                    row=summary_start_row,
                     column=2,
-                    value=format_currency(float(value)),
+                    value=format_currency(
+                        float(value)
+                    ),
                 )
+
+                summary_start_row += 1
+
+        worksheet.freeze_panes = "A4"
 
         workbook.save(file_path)
 
@@ -857,12 +940,18 @@ def export_report_to_excel(
             f"Excel raporu oluşturuldu:\n{file_path}",
         )
 
-    except (OSError, ValueError) as error:
+    except (
+        OSError,
+        ValueError,
+        PermissionError,
+    ) as error:
         return (
             False,
-            f"Excel raporu oluşturulurken hata oluştu: {error}",
+            (
+                "Excel raporu oluşturulurken "
+                f"hata oluştu: {error}"
+            ),
         )
-
 
 def register_pdf_font() -> str:
     """
