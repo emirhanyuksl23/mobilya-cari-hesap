@@ -1,134 +1,52 @@
 # 🪑 Mobilya Cari Hesap
 
-Profesyonel mobilya işletmeleri için geliştirilen, Python tabanlı masaüstü cari hesap yönetim sistemi.
+Python, **CustomTkinter** ve **SQLite** kullanılarak geliştirilen, mobilya işletmeleri için tasarlanmış masaüstü cari hesap yönetim sistemi.
 
-Bu uygulama sayesinde müşterilerin borç, tahsilat, indirim ve iade işlemleri kolayca takip edilebilir. Program tamamen yerel olarak çalışır ve internet bağlantısı gerektirmez.
-
----
-
-# ✨ Özellikler
-
-## 🔐 Güvenli Giriş
-
-- Kullanıcı adı ve şifre ile giriş
-- Şifrelerin bcrypt ile hashlenerek saklanması
-- Kullanıcı bilgilerini değiştirebilme
+Uygulama; müşteri kayıtlarını, borçlandırma, tahsilat, indirim ve iade işlemlerini kolayca yönetebilmek amacıyla geliştirilmiştir. Tamamen yerel olarak çalışır ve internet bağlantısı gerektirmez.
 
 ---
 
-## 👤 Müşteri Yönetimi
+## ✨ Özellikler
 
-- Yeni müşteri ekleme
-- Müşteri bilgilerini düzenleme
-- Müşteri silme
-- Telefon ile arama
-- Müşteri detay ekranı
-
----
-
-## 💰 Cari Hesap İşlemleri
-
-Desteklenen işlemler:
-
-- Borçlandırma
-- Tahsilat
-- İndirim
-- İade
-
-### Ek Özellikler
-
-- Otomatik kalan borç hesaplama
-- Türk Lirası para formatı
-- Hareket düzenleme
-- Hareket silme
-- Tarihe göre kayıt
+- 🔐 Güvenli kullanıcı girişi (bcrypt)
+- 👤 Müşteri ekleme, düzenleme ve silme
+- 🔍 Müşteri arama
+- 📄 Müşteri detay ekranı
+- 💰 Borçlandırma işlemleri
+- 💵 Tahsilat işlemleri
+- 🧾 İndirim ve iade kayıtları
+- 📊 Dashboard özet ekranı
+- 📑 PDF raporları
+- 📗 Excel raporları
+- 💾 Veritabanı yedekleme
+- ♻️ Veritabanı geri yükleme
+- 🌙 Açık / Koyu tema desteği
+- ⚙️ Kullanıcı ve işletme ayarları
 
 ---
 
-## 📊 Dashboard
+## 🛠 Kullanılan Teknolojiler
 
-Ana ekranda;
-
-- Toplam müşteri sayısı
-- Toplam alacak
-- Toplam tahsilat
-- Günlük tahsilat
-- Son cari hareketler
-
-anlık olarak görüntülenebilir.
-
----
-
-## 📄 Raporlar
-
-Program aşağıdaki raporları oluşturabilir.
-
-- Borçlu müşteriler
-- Borcu kapanan müşteriler
-- Cari hareket listesi
-- Tahsilat raporu
-- Müşteri ekstresi
-
-Desteklenen çıktı formatları
-
-- PDF
-- Excel (.xlsx)
+| Teknoloji | Açıklama |
+|-----------|----------|
+| Python 3.11 | Uygulama geliştirme |
+| CustomTkinter | Modern masaüstü arayüz |
+| SQLite | Yerel veritabanı |
+| bcrypt | Şifre güvenliği |
+| openpyxl | Excel raporları |
+| ReportLab | PDF raporları |
+| PyInstaller | EXE oluşturma |
 
 ---
 
-## 💾 Veritabanı Yedekleme
-
-- Tek tıkla yedek alma
-- Yedek listeleme
-- Yedek geri yükleme
-- Güvenlik amacıyla geri yükleme öncesi otomatik yedek oluşturma
-
----
-
-## ⚙️ Ayarlar
-
-- İşletme bilgileri
-- Kullanıcı adı değiştirme
-- Şifre değiştirme
-- Açık / Koyu tema
-
----
-
-# 🛠 Kullanılan Teknolojiler
-
-- Python 3.11
-- CustomTkinter
-- SQLite
-- bcrypt
-- openpyxl
-- ReportLab
-- PyInstaller
-
----
-
-# 📂 Proje Yapısı
+## 📂 Proje Yapısı
 
 ```text
-mobilya_cari/
+mobilya_cari
 │
 ├── assets/
-│
 ├── pages/
-│   ├── dashboard.py
-│   ├── customers.py
-│   ├── customer_detail.py
-│   ├── transactions.py
-│   ├── reports.py
-│   ├── backup.py
-│   └── settings.py
-│
 ├── services/
-│   ├── customer_service.py
-│   ├── transaction_service.py
-│   ├── dashboard_service.py
-│   ├── report_service.py
-│   ├── backup_service.py
-│   └── settings_service.py
 │
 ├── auth.py
 ├── config.py
@@ -139,15 +57,15 @@ mobilya_cari/
 
 ---
 
-# 🚀 Kurulum
+## 🚀 Kurulum
 
-Projeyi bilgisayarınıza indirin.
+Depoyu klonlayın.
 
 ```bash
 git clone https://github.com/emirhanyuksl23/mobilya-cari-hesap.git
 ```
 
-Klasöre girin.
+Proje klasörüne girin.
 
 ```bash
 cd mobilya-cari-hesap
@@ -167,81 +85,47 @@ python main.py
 
 ---
 
-# 📦 Windows EXE Oluşturma
+## 📦 Windows Uygulaması
 
-```bash
-pip install pyinstaller
-```
+Windows sürümü PyInstaller kullanılarak oluşturulmuştur.
 
-Ardından
-
-```bash
-pyinstaller --noconfirm --clean --onedir --windowed --name MobilyaCari main.py
-```
-
-oluşan uygulama
-
-```text
-dist/
-    MobilyaCari/
-        MobilyaCari.exe
-```
-
-klasöründedir.
+Programın çalışabilmesi için **dist/MobilyaCari** klasörünün tamamı kullanılmalıdır.
 
 ---
 
-# 💻 Sistem Gereksinimleri
+## 📁 Veri Konumu
 
-- Windows 10 / 11
-- Python 3.11+
-- Yaklaşık 100 MB boş disk alanı
+Program kullanıcı verilerini proje klasöründe saklamaz.
 
----
-
-# 📁 Verilerin Saklandığı Konum
-
-Program verileri proje klasöründe tutulmaz.
-
-Windows üzerinde otomatik olarak
+Veriler otomatik olarak aşağıdaki klasöre kaydedilir.
 
 ```text
 Belgeler/
-    MobilyaCari/
+└── MobilyaCari/
+    ├── cari.db
+    ├── yedekler/
+    └── raporlar/
 ```
 
-klasörü oluşturulur.
-
-Bu klasör içerisinde
-
-```text
-cari.db
-yedekler/
-raporlar/
-```
-
-bulunur.
-
-Bu sayede program silinse bile kullanıcı verileri korunur.
+Bu sayede uygulama silinse bile kullanıcı verileri korunur.
 
 ---
 
-# 🎯 Gelecek Sürümler
+## 🎯 Yol Haritası
 
-Planlanan özellikler
+Planlanan geliştirmeler:
 
 - 📦 Stok Takibi
-- 🛒 Sipariş Yönetimi
+- 🧾 Sipariş Yönetimi
 - 🚚 Teslimat Takibi
 - 👥 Çok Kullanıcılı Sistem
-- 🌐 Ağ Üzerinden Kullanım
 - ☁️ Bulut Yedekleme
 - 📱 Mobil Uygulama
 - 📈 Grafik ve İstatistikler
 
 ---
 
-# 👨‍💻 Geliştirici
+## 👨‍💻 Geliştirici
 
 **Emirhan Yüksel**
 
@@ -251,16 +135,8 @@ https://github.com/emirhanyuksl23
 
 ---
 
-# 📌 Proje Durumu
-
-✅ Aktif olarak geliştirilmektedir.
-
-Yeni özellikler düzenli olarak eklenecektir.
-
----
-
-# 📄 Lisans
+## 📄 Lisans
 
 Bu proje **MIT License** altında lisanslanmıştır.
 
-Ayrıntılar için proje dizinindeki **LICENSE** dosyasına bakabilirsiniz.
+Daha fazla bilgi için **LICENSE** dosyasına bakabilirsiniz.
