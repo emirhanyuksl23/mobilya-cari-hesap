@@ -13,34 +13,35 @@ TRANSACTION_TYPES = (
 )
 
 
-def parse_amount(amount_text: str) -> tuple[bool, float, str]:
+def parse_amount(
+    amount_text: str,
+) -> tuple[bool, float, str]:
     """
-    Kullanıcının yazdığı tutarı sayıya dönüştürür.
+    Türk para biçimini float'a çevirir.
 
-    Kabul edilen örnekler:
-    120000
-    120000,50
-    120000.50
-    120.000,50
+    Örnekler:
+        20000        -> 20000.0
+        20.000       -> 20000.0
+        20.000,50    -> 20000.50
+        150,75       -> 150.75
     """
 
-    amount_text = amount_text.strip().replace(" ", "")
+    amount_text = amount_text.strip()
 
     if not amount_text:
         return False, 0.0, "Tutar boş bırakılamaz."
 
     try:
-        if "," in amount_text and "." in amount_text:
-            amount_text = amount_text.replace(".", "")
-            amount_text = amount_text.replace(",", ".")
+        normalized = (
+            amount_text
+            .replace(".", "")   # binlik ayıracı kaldır
+            .replace(",", ".")  # ondalık ayıracı dönüştür
+        )
 
-        elif "," in amount_text:
-            amount_text = amount_text.replace(",", ".")
-
-        amount = float(amount_text)
+        amount = float(normalized)
 
     except ValueError:
-        return False, 0.0, "Geçerli bir tutar girin."
+        return False, 0.0, "Geçerli bir tutar giriniz."
 
     if amount <= 0:
         return False, 0.0, "Tutar sıfırdan büyük olmalıdır."
